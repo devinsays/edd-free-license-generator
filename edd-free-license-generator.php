@@ -77,6 +77,11 @@ function eddflg_generate_license_form( $atts ) {
 		<p>Download the <a href="<?php echo $link; ?>">Instant Content</a> plugin.</p>
 		<p>Enter your license key: <?php echo $license; ?></p>
 	<?php } else { ?>
+
+	<p>To download the plugin, please agree to the terms and sign up with you e-mail address.</p>
+
+	<p>After registering, you will also get a license key for your account, which will be used to enable to plugin and your content library.</p>
+
 	<form action="" id="generate-license-form" method="POST">
 
 		<fieldset>
@@ -163,8 +168,8 @@ function eddflg_manual_create_payment( $data ) {
 		'status'		=> 'pending' // start with pending so we can call the update function, which logs all stats
 	);
 
-	if ( empty( $data['receipt'] ) || $data['receipt'] != '1' ) {
-		remove_action( 'edd_complete_purchase', 'edd_trigger_purchase_receipt', 999 );
+	if ( $data['receipt'] != '1' ) {
+		// remove_action( 'edd_complete_purchase', 'edd_trigger_purchase_receipt', 999 );
 	}
 
 	$payment_id = edd_insert_payment( $purchase_data );
@@ -173,7 +178,7 @@ function eddflg_manual_create_payment( $data ) {
 	edd_update_payment_status( $payment_id, 'complete' ) ;
 
 	// Send email with secure download link
-	edd_email_purchase_receipt( $payment_id );
+	edd_email_purchase_receipt( $payment_id, true );
 
 	return $payment_id;
 }
