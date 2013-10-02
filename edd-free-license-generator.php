@@ -67,14 +67,14 @@ function eddflg_generate_license_form( $atts ) {
 			$payment_id = eddflg_manual_create_payment( $data );
 			$success = true;
 			$license = eddflg_get_licence_key( $payment_id );
-			$link = eddflg_build_download_url( $data['download_id'] );
+			$download_url =	eddflg_build_download_url( $payment_id );
 		}
 	}
 	?>
 
 	<?php if ( $success ) { ?>
 		<h3><?php _e( 'Get Started', 'textdomain' ); ?></h3>
-		<p>Download the <a href="<?php echo $link; ?>">Instant Content</a> plugin.</p>
+		<p>Download the <a href="<?php echo $download_url; ?>">Instant Content</a> plugin.</p>
 		<p>Enter your license key: <?php echo $license; ?></p>
 	<?php } else { ?>
 
@@ -206,28 +206,19 @@ function eddflg_get_licence_key( $payment_id ) {
  *
  * @since 0.1
  */
-function eddflg_build_download_url( $download_id ) {
+function eddflg_build_download_url( $payment_id ) {
 
-	global $edd_options;
-	$files = edd_get_download_files( $download_id );
+	$downloads = edd_get_payment_meta_cart_details( $payment_id, true );
+	$purchase_data 	= edd_get_payment_meta( $payment_id );
 
-	$hours = isset( $edd_options['download_link_expiration'] )
-			&& is_numeric( $edd_options['download_link_expiration'] )
-			? absint($edd_options['download_link_expiration']) : 24;
+	if ( $downloads ) {
+		$price_id = edd_get_cart_item_price_id( $downloads[0] );
+		$download_files = edd_get_download_files( $downloads[0]['id'], $price_id );
+	}
 
-	if( ! ( $date = strtotime( '+' . $hours . 'hours' ) ) )
-		$date = 2147472000; // Highest possible date, January 19, 2038
-
-	$params = array(
-		'file' 			=> $files[0],
-		'did'    		=> $download_id,
-		'vp_edd_act'	=> 'download',
-		'expire' 		=> rawurlencode( base64_encode( $date ) )
-	);
-
-	$params = apply_filters( 'edd_download_file_url_args', $params );
-
-	$download_url = add_query_arg( $params, home_url() );
+	foreach ( $download_files as $filekey => $file ) {
+		$download_url = edd_get_download_file_url( $purchase_data['key'], $purchase_data['email'], $filekey, $downloads[0]['id'], $price_id );
+	}
 
 	return $download_url;
 }
