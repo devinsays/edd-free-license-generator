@@ -3,7 +3,7 @@
 Plugin Name: Easy Digital Downloads - Free License Generator
 Plugin URI: http://wptheming.com
 Description: Allows users to bypass checkout page when downloading a specific product.  Should be used in conjuction with the EDD Software Licensing Plugin.
-Version: 0.1
+Version: 0.2
 Author: Devin Price
 Author URI:  http://wptheming.com
 Contributors: downstairsdev
@@ -38,9 +38,9 @@ function eddflg_generate_license_form( $atts ) {
 	$atts ) );
 
 	$emailError = false;
-	$agreeError = false;
 	$hasError = false;
 	$success = false;
+	$output = '';
 
 	if ( isset($_POST['download-plugin']) && isset($_POST['license_nonce_field'] ) && wp_verify_nonce( $_POST['license_nonce_field'], 'license_nonce') ) {
 
@@ -56,13 +56,6 @@ function eddflg_generate_license_form( $atts ) {
 			$hasError = true;
 		}
 
-		if ( isset( $_POST['agree_to_terms'] ) && $_POST['agree_to_terms'] ) {
-			$data['agree_to_terms'] = 1;
-		} else {
-			$agreeError = __( 'Please agree to the terms to download', 'textdomain' );
-			$hasError = true;
-		}
-
 		if ( !$hasError ) {
 			$payment_id = eddflg_manual_create_payment( $data );
 			$success = true;
@@ -72,46 +65,32 @@ function eddflg_generate_license_form( $atts ) {
 	}
 	?>
 
-	<?php if ( $success ) { ?>
-		<h3><?php _e( 'Get Started', 'textdomain' ); ?></h3>
-		<p>Download the <a href="<?php echo $download_url; ?>">Instant Content</a> plugin.</p>
-		<p>Enter your license key: <?php echo $license; ?></p>
-	<?php } else { ?>
+	<?php if ( $success ) {
+		$output .= '<p>Download the <a href="' . $download_url . '">Instant Content</a> plugin.</p>';
+		$output .= '<p>Enter your license key: ' . $license . '</p>';
+	} else {
+		$output .= '<form action="" id="generate-license-form" method="POST">';
+		$output .= '<fieldset style="margin-bottom:20px">';
+		$output .= '<label for="email">' . __( 'E-mail Address', 'textdomain' ) . '</label>';
+		$emailValue = '';
+		if ( isset( $_POST['email'] ) ) {
+			$emailValue = $_POST['email'];
+		}
+		$output .= '<input type="email" name="email" id="email" value="' . $emailValue . '" class="required" />';
+		if ( $emailError ) {
+			$output .= '<p class="error">' . $emailError . '</p>';
+		}
+		$output .= '</fieldset>';
 
-	<p>To download the plugin, please agree to the terms and sign up with you e-mail address.</p>
+		$output .= '<fieldset>';
+		$output .= wp_nonce_field( 'license_nonce', 'license_nonce_field' );
+		$output .= '<input type="hidden" name="download-plugin" value="true" />';
+		$output .= '<button type="submit">' . __( 'Download Plugin', 'textdomain' ) . '</button>';
+		$output .= '</fieldset>';
+		$output .= '</form>';
+	}
 
-	<p>After registering, you will also get a license key for your account, which will be used to enable to plugin and your content library.</p>
-
-	<form action="" id="generate-license-form" method="POST">
-
-		<fieldset style="margin-bottom:20px">
-			<label for="email"><?php _e( 'E-mail Address', 'textdomain' ) ?></label>
-			<input type="email" name="email" id="email" value="<?php if ( isset( $_POST['email'] ) ) echo $_POST['email']; ?>" class="required" />
-			<?php if ( $emailError ) { ?>
-			<p class="error"><?php echo $emailError; ?></p>
-			<?php } ?>
-		</fieldset>
-
-		<fieldset style="margin-bottom:20px">
-			<textarea readonly style="width:90%; height:200px; padding:10px; line-height:1.2;">By clicking "Agree" or similar button and placing an order through this site, you expressly agree that we are authorized to charge to the payment method you provide at that time (or to a different payment method you designate that we accept) the applicable fee at the then-current rate displayed on the site plus any applicable taxes, fees, and any other charges you may incur in connection with your use of the site or your order. Pricing details and procedures for payment and delivery are displayed on the site, and are subject to change without notice. We reserve all rights in and to the content made available on the site, until your payment for the applicable content has been processed and accepted. You may not copy, store, modify, download, distribute or create derivative works of the site or any content available on the site except with respect to the applicable content for which you have paid. All transactions are final. You agree not to do, or attempt to do, any of the following: (a) access or use the site in any way that violates or is not in full compliance with any applicable local, state, national or international law, regulation, or statute (including export laws), contracts, intellectual property rights or constitutes the commission of a tort, or for any purpose that is harmful or unintended (by us); (b) access, tamper with, or use services or areas of the site that you are not authorized to access; (c) use any robot, spider, scraper or other automated means or interface not provided by us to access the site; or extract content or data from the site without our authorization; (d) reverse engineer any aspect of the site or content, or bypass or circumvent measures employed to prevent or limit access to any area, content or code of the site; (e) send to or otherwise impact us or the site (or anything or anyone else) with harmful, illegal, deceptive or disruptive code such as a virus, “spyware,” “adware” or other code that could adversely impact the site or any user; or (f) take any action which might impose a significant burden on the site’s infrastructure or computer systems, or otherwise interfere with the ordinary operation of the site. WE PROVIDE THE SITE AND CONTENT ON AN "AS IS" AND "AS AVAILABLE" BASIS. WE MAKE NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION, ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT REPRESENT OR WARRANT THAT THE SITE, CONTENT, INFORMATION, OR MATERIALS AVAILABLE ON OR THROUGH THE SITE WILL: (I) BE UNINTERRUPTED, (II) BE FREE OF DEFECTS, VIRUSES, INACCURACIES, ERRORS, OR OTHER HARMFUL COMPONENTS, (III) MEET YOUR REQUIREMENTS OR SATISFACTION, (IV) BE SECURE FROM HACKERS OR OTHER UNAUTHORIZED PERSONS; OR (V) OPERATE IN THE CONFIGURATION OR WITH OTHER HARDWARE OR SOFTWARE THAT YOU USE. IF APPLICABLE LAW DOES NOT ALLOW THE EXCLUSION OF SOME OR ALL OF THE ABOVE WARRANTIES TO APPLY TO YOU, THE ABOVE EXCLUSIONS WILL APPLY TO YOU TO THE EXTENT PERMITTED BY APPLICABLE LAW. YOU USE THE SITE AND CONTENT AT YOUR OWN RISK. WE ASSUME NO RESPONSIBILITY FOR AND MAKE NO WARRANTY OR REPRESENTATION AS TO: (i) THE ACCURACY, CURRENCY, COMPLETENESS, RELIABILITY, OR USEFULNESS OF THE SITE OR CONTENT (INCLUDING DESCRIPTIONS THEREOF); OR (ii) ANY RESULTS THAT MAY BE OBTAINED FROM USE OF THE SITE OR CONTENT. TO THE MAXIMUM EXTENT PERMITTED BY LAW, YOU AGREE THAT WE WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, PUNITIVE, EXEMPLARY, SPECIAL OR CONSEQUENTIAL DAMAGES, LOST PROFITS, LOST REVENUE, LOSS OF DATA, LOSS OF PRIVACY, LOSS OF GOODWILL OR ANY OTHER LOSSES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES AND EVEN IN THE EVENT OF FAULT, TORT (INCLUDING NEGLIGENCE) OR STRICT OR PRODUCT LIABILITY. WITHOUT LIMITING THE FOREGOING, IN NO EVENT WILL OUR AGGREGATE LIABILITY EXCEED, IN TOTAL, THE AMOUNTS PAID BY YOU TO US WITH RESPECT TO THE TRANSACTION THAT GIVES RISE TO THE CLAIM.</textarea>
-		</fieldset>
-
-		<fieldset style="margin-bottom:20px">
-			<label for="agree_to_terms"><?php _e( 'Agree to terms', 'textdomain' ) ?></label>
-			<input name="agree_to_terms" type="checkbox" id="agree-to-terms" <?php if ( isset( $data['agree_to_terms'] ) ) checked( $data['agree_to_terms'], true, true ); ?>>
-			<?php if ( $agreeError ) { ?>
-			<p class="error"><?php echo $agreeError; ?></p>
-			<?php } ?>
-		</fieldset>
-
-		<fieldset>
-			<?php wp_nonce_field( 'license_nonce', 'license_nonce_field' ); ?>
-			<input type="hidden" name="download-plugin" value="true" />
-			<button type="submit"><?php _e( 'Download Plugin', 'textdomain' ) ?></button>
-		</fieldset>
-
-	</form>
-	<?php }
+	return $output;
 
 }
 
@@ -182,7 +161,7 @@ function eddflg_manual_create_payment( $data ) {
 	edd_update_payment_status( $payment_id, 'complete' ) ;
 
 	// Send email with secure download link
-	edd_email_purchase_receipt( $payment_id, true );
+	// edd_email_purchase_receipt( $payment_id, true );
 
 	return $payment_id;
 }
