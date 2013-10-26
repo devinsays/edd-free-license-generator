@@ -42,7 +42,7 @@ function eddflg_generate_license_form( $atts ) {
 	$success = false;
 	$output = '';
 
-	if ( isset($_POST['download-plugin']) && isset($_POST['license_nonce_field'] ) && wp_verify_nonce( $_POST['license_nonce_field'], 'license_nonce') ) {
+	if ( isset($_POST['license_nonce_field'] ) && wp_verify_nonce( $_POST['license_nonce_field'], 'license_nonce') ) {
 
 		$data = array();
 
@@ -58,35 +58,33 @@ function eddflg_generate_license_form( $atts ) {
 
 		if ( !$hasError ) {
 			$payment_id = eddflg_manual_create_payment( $data );
-			$success = true;
 			$license = eddflg_get_licence_key( $payment_id );
 			$download_url =	eddflg_build_download_url( $payment_id );
+			$success = true;
 		}
 	}
 	?>
 
 	<?php if ( $success ) {
-		$output .= '<p>Download the <a href="' . $download_url . '">Instant Content</a> plugin.</p>';
-		$output .= '<p>Enter your license key: ' . $license . '</p>';
+		$output .= '<div class="submission-success">';
+		$output .= '<h3>Congratulations!  You\'re registered.</h3>';
+		$output .= '<p class="license">Your license key is: ' . $license . '</p>';
+		$output .= '<a href="' . $download_url . '" class="download button">' . __( 'Download the Plugin', 'textdomain' ) . '</a>';
+		$output .= '</div>';
 	} else {
-		$output .= '<form action="" id="generate-license-form" method="POST">';
-		$output .= '<fieldset style="margin-bottom:20px">';
-		$output .= '<label for="email">' . __( 'E-mail Address', 'textdomain' ) . '</label>';
+		$output .= '<h3>The fastest way to get quality content for your WordPress site.</h3>';
+		$output .= '<form action="" id="generate-license-form" class="clearfix" method="POST">';
 		$emailValue = '';
 		if ( isset( $_POST['email'] ) ) {
 			$emailValue = $_POST['email'];
 		}
-		$output .= '<input type="email" name="email" id="email" value="' . $emailValue . '" class="required" />';
+		$output .= '<p>Register with your e-mail address:</p>';
+		$output .= '<input id="email" type="email" name="email" value="' . $emailValue . '" placeholder="Your e-mail address" class="required">';
 		if ( $emailError ) {
 			$output .= '<p class="error">' . $emailError . '</p>';
 		}
-		$output .= '</fieldset>';
-
-		$output .= '<fieldset>';
+		$output .= '<input type="submit" value="' . __( 'Download Plugin', 'textdomain' ) . '" class="button">';
 		$output .= wp_nonce_field( 'license_nonce', 'license_nonce_field' );
-		$output .= '<input type="hidden" name="download-plugin" value="true" />';
-		$output .= '<button type="submit">' . __( 'Download Plugin', 'textdomain' ) . '</button>';
-		$output .= '</fieldset>';
 		$output .= '</form>';
 	}
 
