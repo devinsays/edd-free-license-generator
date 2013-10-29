@@ -66,10 +66,14 @@ function eddflg_generate_license_form( $atts ) {
 	?>
 
 	<?php if ( $success ) {
-		$output .= '<div class="submission-success">';
+		$output .= '<div class="submission-success clearfix">';
 		$output .= '<h3>Congratulations!  You\'re registered.</h3>';
 		$output .= '<p class="license">Your license key is: ' . $license . '</p>';
 		$output .= '<a href="' . $download_url . '" class="download button">' . __( 'Download the Plugin', 'textdomain' ) . '</a>';
+		$output .= '</div>';
+		$output .= '<div class="license-terms">';
+		$output .= '<p>Copyright Demand Media, Inc. 2013.  The Instant Content Plug-In is free software, licensed and distributed under the <a href="http://www.gnu.org/licenses/gpl-2.0.txt">GNU General Public License v 2.0</a> or later version.</p>';
+		$output .= '<p>This program is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE or NON-INFRINGMENT.  See the GNU General Public License for more details.</p>';
 		$output .= '</div>';
 	} else {
 		$output .= '<h3>The fastest way to get quality content for your WordPress site.</h3>';
