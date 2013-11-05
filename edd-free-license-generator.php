@@ -73,7 +73,7 @@ function eddflg_generate_license_form( $atts ) {
 		$output .= '</div>';
 		$output .= '<div class="license-terms">';
 		$output .= '<p>Copyright Demand Media, Inc. 2013.  The Instant Content Plug-In is free software, licensed and distributed under the <a href="http://www.gnu.org/licenses/gpl-2.0.txt">GNU General Public License v 2.0</a> or later version.</p>';
-		$output .= '<p>This program is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE or NON-INFRINGMENT.  See the GNU General Public License for more details.</p>';
+		$output .= '<p>This program is distributed WITHOUT WARRANTY; without even the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE or NON-INFRINGMENT.  See the GNU General Public License for more details.</p>';
 		$output .= '</div>';
 	} else {
 		$output .= '<h3>The fastest way to get quality content for your WordPress site.</h3>';
