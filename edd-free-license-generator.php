@@ -12,6 +12,8 @@ Contributors: downstairsdev
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+if ( class_exists( 'Easy_Digital_Downloads' ) ) :
+
 /**
  * Creates license shortcode
  *
@@ -147,7 +149,7 @@ function eddflg_manual_create_payment( $data ) {
 		'purchase_key'	=> strtolower( md5( uniqid() ) ), // random key
 		'user_email'	=> $email,
 		'user_info' 	=> $user_info,
-		'currency'		=> $edd_options['currency'],
+		'currency'		=> 'USD',
 		'downloads'		=> $data['downloads'],
 		'cart_details' 	=> $cart_details,
 		'status'		=> 'pending' // start with pending so we can call the update function, which logs all stats
@@ -203,3 +205,5 @@ function eddflg_build_download_url( $payment_id ) {
 
 	return $download_url;
 }
+
+endif;
