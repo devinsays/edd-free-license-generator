@@ -12,6 +12,8 @@ Contributors: downstairsdev
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+if ( class_exists( 'Easy_Digital_Downloads' ) ) :
+
 /**
  * Creates license shortcode
  *
@@ -73,10 +75,10 @@ function eddflg_generate_license_form( $atts ) {
 		$output .= '</div>';
 		$output .= '<div class="license-terms">';
 		$output .= '<p>Copyright Demand Media, Inc. 2013.  The Instant Content Plug-In is free software, licensed and distributed under the <a href="http://www.gnu.org/licenses/gpl-2.0.txt">GNU General Public License v 2.0</a> or later version.</p>';
-		$output .= '<p>This program is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE or NON-INFRINGMENT.  See the GNU General Public License for more details.</p>';
+		$output .= '<p>This program is distributed WITHOUT WARRANTY; without even the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE or NON-INFRINGMENT.  See the GNU General Public License for more details.</p>';
 		$output .= '</div>';
 	} else {
-		$output .= '<h3>The fastest way to get quality content for your WordPress site.</h3>';
+		$output .= '<h3>The Fastest Way to Get Content for your WordPress Site.</h3>';
 		$output .= '<form action="" id="generate-license-form" class="clearfix" method="POST">';
 		$emailValue = '';
 		if ( isset( $_POST['email'] ) ) {
@@ -133,6 +135,7 @@ function eddflg_manual_create_payment( $data ) {
 			'id' 			=> $download['id'],
 			'item_number' 	=> $download,
 			'price' 		=> $item_price,
+			'tax'			=> '0',
 			'quantity' 		=> 1,
 		);
 
@@ -147,7 +150,7 @@ function eddflg_manual_create_payment( $data ) {
 		'purchase_key'	=> strtolower( md5( uniqid() ) ), // random key
 		'user_email'	=> $email,
 		'user_info' 	=> $user_info,
-		'currency'		=> $edd_options['currency'],
+		'currency'		=> 'USD',
 		'downloads'		=> $data['downloads'],
 		'cart_details' 	=> $cart_details,
 		'status'		=> 'pending' // start with pending so we can call the update function, which logs all stats
@@ -203,3 +206,5 @@ function eddflg_build_download_url( $payment_id ) {
 
 	return $download_url;
 }
+
+endif;
